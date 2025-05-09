@@ -1,3 +1,4 @@
+import * as React from 'react'; // Added import
 import type { DetectEmotionalDistressOutput } from '@/ai/flows/detect-emotional-distress';
 import type { GeneratePersonalizedSupportOutput } from '@/ai/flows/generate-personalized-support';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

@@ -1,6 +1,7 @@
 
 "use client";
 
+import * as React from 'react'; // Added import
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

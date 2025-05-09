@@ -1,6 +1,7 @@
 
 "use client";
 
+import * as React from 'react'; // Added import
 import { useState, useEffect, useRef } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Textarea } from '@/components/ui/textarea';

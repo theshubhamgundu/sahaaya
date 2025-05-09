@@ -1,6 +1,7 @@
 
 "use client";
 
+import * as React from 'react'; // Added import
 import { useState, useRef, useEffect, FormEvent, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -168,7 +169,7 @@ export function ChatInterface({ userRole }: ChatInterfaceProps) {
                     'p-3 rounded-lg max-w-xs lg:max-w-md break-words shadow-sm',
                     msg.sender === userRole && 'bg-primary text-primary-foreground',
                     msg.sender !== userRole && msg.sender !== 'system' && 'bg-secondary text-secondary-foreground',
-                    msg.sender === 'system' && 'bg-transparent text-muted-foreground text-base italic w-full text-left py-2 px-0 shadow-none' // Changed text-sm to text-base, and text-center to text-left
+                    msg.sender === 'system' && 'bg-transparent text-muted-foreground text-base italic w-full text-left py-2 px-0 shadow-none'
                   )}
                 >
                   {msg.sender !== 'system' && msg.senderName && (
@@ -176,7 +177,7 @@ export function ChatInterface({ userRole }: ChatInterfaceProps) {
                       {msg.senderName}
                     </p>
                   )}
-                  <p className="text-base">{msg.text}</p> {/* Changed text-sm to text-base */}
+                  <p className="text-base">{msg.text}</p>
                   {msg.sender !== 'system' && (
                     <p className={cn("text-xs mt-1 opacity-70", msg.sender === userRole ? "text-right text-primary-foreground/70" : "text-left text-secondary-foreground/70")}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -197,7 +198,7 @@ export function ChatInterface({ userRole }: ChatInterfaceProps) {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={`Type your message as ${userRole}...`}
-            className="flex-grow resize-none text-base" // Added text-base
+            className="flex-grow resize-none text-base"
             rows={2}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
