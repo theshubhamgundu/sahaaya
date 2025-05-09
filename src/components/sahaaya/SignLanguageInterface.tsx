@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -10,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { interpretHandGesture, type InterpretHandGestureOutput } from '@/ai/flows/interpret-hand-gesture';
 import { generateSignLanguageResponse, type GenerateSignLanguageResponseOutput } from '@/ai/flows/generate-sign-language-response';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Label } from '@/components/ui/label';
 
 export function SignLanguageInterface() {
   const videoRef = useRef<HTMLVideoElement>(null);
