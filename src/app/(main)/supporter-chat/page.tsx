@@ -5,7 +5,7 @@ import { Info } from 'lucide-react';
 
 export default function SupporterChatPage() {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full"> {/* Changed max-w-4xl mx-auto to w-full */}
       <div className="text-center mb-8">
           <h2 className="text-3xl font-semibold text-foreground tracking-tight">Supporter Chat Portal</h2>
           <p className="text-lg text-muted-foreground mt-1">Provide live support to users.</p>
@@ -24,3 +24,4 @@ export default function SupporterChatPage() {
     </div>
   );
 }
+

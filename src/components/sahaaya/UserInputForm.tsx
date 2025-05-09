@@ -172,7 +172,7 @@ export function UserInputForm() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full"> {/* Changed max-w-2xl mx-auto to w-full */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <Label htmlFor="userStory" className="block text-lg font-medium text-foreground mb-2">
@@ -240,3 +240,4 @@ export function UserInputForm() {
     </div>
   );
 }
+

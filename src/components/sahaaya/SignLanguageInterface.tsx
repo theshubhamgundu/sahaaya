@@ -135,7 +135,7 @@ export function SignLanguageInterface() {
   const isLoading = isInterpreting || isGeneratingResponse;
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-6">
+    <div className="w-full space-y-6"> {/* Changed max-w-3xl mx-auto to w-full */}
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center text-xl">
@@ -219,3 +219,4 @@ export function SignLanguageInterface() {
     </div>
   );
 }
+

@@ -139,7 +139,7 @@ export function ChatInterface({ userRole }: ChatInterfaceProps) {
 
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-xl">
+    <Card className="w-full shadow-xl"> {/* Changed max-w-2xl mx-auto to w-full */}
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center text-xl">
           <MessageSquare className="mr-2 h-6 w-6 text-primary" />

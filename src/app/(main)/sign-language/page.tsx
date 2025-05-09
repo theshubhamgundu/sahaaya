@@ -6,7 +6,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function SignLanguagePage() {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full"> {/* Changed max-w-4xl mx-auto to w-full */}
       <div className="text-center mb-8">
           <h2 className="text-3xl font-semibold text-foreground tracking-tight">Sign Language Communication</h2>
           <p className="text-lg text-muted-foreground mt-1">Use your camera to communicate with hand gestures.</p>
@@ -23,9 +23,10 @@ export default function SignLanguagePage() {
 
       <SignLanguageInterface />
       
-      <div className="mt-12 max-w-2xl mx-auto">
+      <div className="mt-12 w-full"> {/* Changed max-w-2xl mx-auto to w-full */}
        <PrivacyBanner />
       </div>
     </div>
   );
 }
+

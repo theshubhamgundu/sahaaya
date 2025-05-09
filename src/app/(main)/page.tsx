@@ -5,7 +5,7 @@ import { Info } from 'lucide-react';
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <Card className="w-full max-w-2xl shadow-xl border-border transition-all duration-300 hover:shadow-2xl hover:scale-[1.01]">
+      <Card className="w-full max-w-3xl shadow-xl border-border transition-all duration-300 hover:shadow-2xl hover:scale-[1.01]"> {/* Increased max-w-2xl to max-w-3xl */}
         <CardHeader className="items-center text-center pt-8">
           <Info data-ai-hint="information symbol" className="h-16 w-16 mb-4 text-primary" />
           <CardTitle className="text-3xl font-semibold">Welcome to Sahaaya AI</CardTitle>
@@ -22,3 +22,4 @@ export default function HomePage() {
     </div>
   );
 }
+
