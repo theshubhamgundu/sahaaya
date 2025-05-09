@@ -91,6 +91,7 @@ export function LegalInputForm() {
     } else {
       try {
         setSpeechError(null); // Clear previous errors
+        setUserInput(''); // Clear text area when starting new recording
         recognitionRef.current.start();
         setIsListening(true);
         toast({ title: "Listening...", description: "Speak into your microphone. Speech will be transcribed into the text area." });
@@ -143,24 +144,9 @@ export function LegalInputForm() {
     <div className="w-full max-w-2xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <Label htmlFor="userSituation" className="block text-lg font-medium text-foreground">
-              Describe your legal concern or situation.
-            </Label>
-            {recognitionRef.current && (
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={handleToggleListening}
-                disabled={isLoading}
-                title={isListening ? "Stop voice input" : "Start voice input"}
-                className="ml-2"
-              >
-                {isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}
-              </Button>
-            )}
-          </div>
+          <Label htmlFor="userSituation" className="block text-lg font-medium text-foreground mb-2">
+            Describe your legal concern or situation.
+          </Label>
           <Textarea
             id="userSituation"
             value={userInput}
@@ -171,7 +157,7 @@ export function LegalInputForm() {
             aria-label="Describe your legal situation"
             disabled={isLoading}
           />
-           {speechError && !isListening && ( // Only show error if not currently trying to listen
+           {speechError && !isListening && ( 
             <Alert variant="destructive" className="mt-2">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Voice Input Error</AlertTitle>
@@ -179,23 +165,38 @@ export function LegalInputForm() {
             </Alert>
           )}
         </div>
-        <Button 
-          type="submit" 
-          className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3 px-6 rounded-lg shadow-md transition-transform hover:scale-105"
-          disabled={isLoading || isListening}
-          aria-live="polite"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              Get Legal Guidance <Send className="ml-2 h-5 w-5" />
-            </>
-          )}
-        </Button>
+
+        <div className="flex items-center gap-2">
+          <Button 
+            type="submit" 
+            className="flex-grow bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3 px-6 rounded-lg shadow-md transition-transform hover:scale-105"
+            disabled={isLoading || isListening}
+            aria-live="polite"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Get Legal Guidance <Send className="ml-2 h-5 w-5" />
+              </>
+            )}
+          </Button>
+           {recognitionRef.current && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleToggleListening}
+                disabled={isLoading}
+                title={isListening ? "Stop voice input" : "Start voice input"}
+                className="p-3 rounded-lg shadow-md"
+              >
+                {isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}
+              </Button>
+            )}
+        </div>
       </form>
 
       <LegalGuidanceDisplay
