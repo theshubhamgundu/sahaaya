@@ -1,7 +1,7 @@
 
 "use client";
 
-import * as React from 'react'; // Added import
+import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { provideRelevantLegalGuidance, type ProvideRelevantLegalGuidanceOutput } from '@/ai/flows/provide-relevant-legal-guidance';
 import { LegalGuidanceDisplay } from './LegalGuidanceDisplay';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { db } from '@/lib/firebase/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 export function LegalInputForm() {
   const [userInput, setUserInput] = useState('');
@@ -31,7 +33,7 @@ export function LegalInputForm() {
       const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognitionAPI) {
         const instance = new SpeechRecognitionAPI();
-        instance.continuous = false; // Stop after first recognized utterance
+        instance.continuous = false;
         instance.interimResults = true;
 
         instance.onresult = (event: SpeechRecognitionEvent) => {
@@ -91,8 +93,8 @@ export function LegalInputForm() {
       setIsListening(false);
     } else {
       try {
-        setSpeechError(null); // Clear previous errors
-        setUserInput(''); // Clear text area when starting new recording
+        setSpeechError(null); 
+        setUserInput(''); 
         recognitionRef.current.start();
         setIsListening(true);
         toast({ title: "Listening...", description: "Speak into your microphone. Speech will be transcribed into the text area." });
@@ -108,7 +110,7 @@ export function LegalInputForm() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (isListening && recognitionRef.current) {
-        recognitionRef.current.stop(); // Stop listening if active before submitting
+        recognitionRef.current.stop(); 
         setIsListening(false);
     }
     if (!userInput.trim()) {
@@ -127,6 +129,33 @@ export function LegalInputForm() {
     try {
       const guidanceData = await provideRelevantLegalGuidance({ situationDescription: userInput });
       setLegalOutput(guidanceData);
+
+      // Store prompt in Firebase
+      if (db) { // Check if db is initialized
+        try {
+          const promptsCollectionRef = collection(db, "legal_prompts");
+          await addDoc(promptsCollectionRef, {
+            promptText: userInput,
+            createdAt: serverTimestamp(),
+            // Optionally, you could store a summary or type of AI response if relevant
+            // aiResponseSummary: guidanceData?.legalGuidance?.legalRights?.substring(0, 100) || "N/A" 
+          });
+          toast({
+            title: "Prompt Saved",
+            description: "Your legal query has been logged securely.",
+          });
+        } catch (firestoreError) {
+          console.error("Error saving prompt to Firebase:", firestoreError);
+          toast({
+            title: "Logging Error",
+            description: "Could not save your query to our records, but your guidance is available below.",
+            variant: "default", // Less severe than "destructive"
+          });
+        }
+      } else {
+        console.warn("Firebase DB not initialized. Prompt not saved.");
+      }
+
     } catch (err) {
       console.error("AI processing error (Legal):", err);
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
@@ -142,7 +171,7 @@ export function LegalInputForm() {
   };
 
   return (
-    <div className="w-full"> {/* Changed max-w-2xl mx-auto to w-full */}
+    <div className="w-full h-full flex flex-col">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <Label htmlFor="userSituation" className="block text-lg font-medium text-foreground mb-2">
@@ -154,7 +183,7 @@ export function LegalInputForm() {
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setUserInput(e.target.value)}
             placeholder={isListening ? "Listening..." : "Explain the situation you need legal information about... or use the microphone icon."}
             rows={8}
-            className="shadow-sm focus:ring-primary focus:border-primary text-base"
+            className="shadow-sm focus:ring-primary focus:border-primary text-base w-full"
             aria-label="Describe your legal situation"
             disabled={isLoading}
           />
@@ -192,19 +221,20 @@ export function LegalInputForm() {
                 onClick={handleToggleListening}
                 disabled={isLoading}
                 title={isListening ? "Stop voice input" : "Start voice input"}
-                className="p-3 rounded-lg shadow-md"
+                className="p-3 rounded-lg shadow-md h-full aspect-square"
               >
                 {isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}
               </Button>
             )}
         </div>
       </form>
-
-      <LegalGuidanceDisplay
-        legalOutput={legalOutput}
-        isLoading={isLoading}
-        error={error}
-      />
+      <div className="flex-grow overflow-y-auto mt-4">
+        <LegalGuidanceDisplay
+          legalOutput={legalOutput}
+          isLoading={isLoading}
+          error={error}
+        />
+      </div>
     </div>
   );
 }
