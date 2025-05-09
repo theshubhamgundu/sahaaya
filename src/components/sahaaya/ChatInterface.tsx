@@ -168,7 +168,7 @@ export function ChatInterface({ userRole }: ChatInterfaceProps) {
                     'p-3 rounded-lg max-w-xs lg:max-w-md break-words shadow-sm',
                     msg.sender === userRole && 'bg-primary text-primary-foreground',
                     msg.sender !== userRole && msg.sender !== 'system' && 'bg-secondary text-secondary-foreground',
-                    msg.sender === 'system' && 'bg-transparent text-muted-foreground text-base italic w-full text-center py-2 px-0 shadow-none' // Changed text-sm to text-base
+                    msg.sender === 'system' && 'bg-transparent text-muted-foreground text-base italic w-full text-left py-2 px-0 shadow-none' // Changed text-sm to text-base, and text-center to text-left
                   )}
                 >
                   {msg.sender !== 'system' && msg.senderName && (
