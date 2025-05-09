@@ -9,6 +9,7 @@ import { Loader2, Camera, Send, MessageSquare, Hand } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { interpretHandGesture, type InterpretHandGestureOutput } from '@/ai/flows/interpret-hand-gesture';
 import { generateSignLanguageResponse, type GenerateSignLanguageResponseOutput } from '@/ai/flows/generate-sign-language-response';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function SignLanguageInterface() {
   const videoRef = useRef<HTMLVideoElement>(null);
