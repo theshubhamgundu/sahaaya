@@ -8,7 +8,7 @@ export default function SupporterChatPage() {
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
           <h2 className="text-3xl font-semibold text-foreground tracking-tight">Supporter Chat Portal</h2>
-          <p className="text-muted-foreground mt-1">Provide live support to users.</p>
+          <p className="text-lg text-muted-foreground mt-1">Provide live support to users.</p>
       </div>
 
       <Alert variant="default" className="mb-6 bg-accent/10 border-accent/30 text-accent-foreground">

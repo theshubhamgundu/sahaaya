@@ -46,7 +46,7 @@ export function Sidebar() {
 
 
   return (
-    <aside className="w-[30%] min-w-[280px] max-w-[400px] flex-shrink-0 border-r border-border bg-card p-6 flex flex-col h-full">
+    <aside className="w-[30%] min-w-[280px] max-w-[400px] flex-shrink-0 border-r border-sidebar-border bg-card p-6 flex flex-col h-full">
       <Link href="/" className="mb-8 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md p-1 -ml-1">
         <LifeBuoy className="h-10 w-10 text-primary" />
         <div>
@@ -64,9 +64,9 @@ export function Sidebar() {
             <Button
               variant={pathname === item.href ? 'secondary' : 'ghost'}
               className={cn(
-                'w-full justify-start text-base h-12 px-3 py-2',
+                'w-full justify-start text-base h-12 px-3 py-2 transition-all duration-200 ease-in-out transform hover:scale-[1.02] hover:shadow-md',
                 pathname === item.href
-                  ? 'bg-primary/10 text-primary font-semibold border border-primary/30'
+                  ? 'bg-primary/10 text-primary font-semibold border border-primary/30 shadow-lg scale-[1.01]'
                   : 'text-foreground/80 hover:bg-muted hover:text-foreground'
               )}
               aria-current={pathname === item.href ? 'page' : undefined}
@@ -85,4 +85,3 @@ export function Sidebar() {
     </aside>
   );
 }
-

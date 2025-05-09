@@ -68,7 +68,7 @@ export function AIResponseDisplay({
   return (
     <div className="space-y-6 mt-8">
       {distressOutput?.emotionalDistressDetected === false && (
-        <Alert className="shadow-md bg-primary/10 border-primary/30">
+        <Alert className="shadow-md bg-primary/10 border-primary/30 transition-all duration-300 hover:shadow-lg">
           <Info className="h-5 w-5 text-primary" />
           <AlertTitle>We're here for you</AlertTitle>
           <AlertDescription>
@@ -78,44 +78,44 @@ export function AIResponseDisplay({
       )}
 
       {hasPersonalizedSupportMessage && (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg transition-all duration-300 hover:shadow-xl hover:border-primary/50">
           <CardHeader>
             <div className="flex items-center">
               <HeartHandshake className="h-6 w-6 mr-2 text-primary" />
               <CardTitle>Our Support For You</CardTitle>
             </div>
             {distressOutput?.distressType && (
-              <CardDescription>Detected emotional state: {distressOutput.distressType}</CardDescription>
+              <CardDescription className="text-base">Detected emotional state: {distressOutput.distressType}</CardDescription>
             )}
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-wrap text-foreground/90">{supportOutput?.message}</p>
+            <p className="whitespace-pre-wrap text-foreground/90 text-base">{supportOutput?.message}</p>
           </CardContent>
         </Card>
       )}
 
       {!hasPersonalizedSupportMessage && hasEmotionalSupport && (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg transition-all duration-300 hover:shadow-xl hover:border-primary/50">
           <CardHeader>
             <div className="flex items-center">
               <Brain className="h-6 w-6 mr-2 text-primary" />
               <CardTitle>Emotional First Aid</CardTitle>
             </div>
              {distressOutput?.distressType && (
-              <CardDescription>Detected emotional state: {distressOutput.distressType}</CardDescription>
+              <CardDescription className="text-base">Detected emotional state: {distressOutput.distressType}</CardDescription>
             )}
           </CardHeader>
           <CardContent className="space-y-3">
             {distressOutput?.affirmation && (
               <div>
-                <h4 className="font-semibold text-foreground/80">Affirmation:</h4>
-                <p className="whitespace-pre-wrap text-foreground/90">{distressOutput.affirmation}</p>
+                <h4 className="font-semibold text-foreground/80 text-base">Affirmation:</h4>
+                <p className="whitespace-pre-wrap text-foreground/90 text-base">{distressOutput.affirmation}</p>
               </div>
             )}
             {distressOutput?.calmingResponse && (
               <div>
-                <h4 className="font-semibold text-foreground/80">Calming Thoughts:</h4>
-                <p className="whitespace-pre-wrap text-foreground/90">{distressOutput.calmingResponse}</p>
+                <h4 className="font-semibold text-foreground/80 text-base">Calming Thoughts:</h4>
+                <p className="whitespace-pre-wrap text-foreground/90 text-base">{distressOutput.calmingResponse}</p>
               </div>
             )}
           </CardContent>
@@ -123,7 +123,7 @@ export function AIResponseDisplay({
       )}
       
       {hasLegalGuidanceString && (
-         <Card className="shadow-lg bg-accent/10 border-accent/30">
+         <Card className="shadow-lg bg-accent/10 border-accent/30 transition-all duration-300 hover:shadow-xl hover:border-accent/70">
           <CardHeader>
             <div className="flex items-center">
               <Gavel className="h-6 w-6 mr-2 text-accent" />
@@ -131,7 +131,7 @@ export function AIResponseDisplay({
             </div>
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-wrap text-foreground/90">{supportOutput?.legalGuidance}</p>
+            <p className="whitespace-pre-wrap text-foreground/90 text-base">{supportOutput?.legalGuidance}</p>
           </CardContent>
         </Card>
       )}

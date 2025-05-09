@@ -46,7 +46,7 @@ export function LegalGuidanceDisplay({
 
   if (!legalOutput || !legalOutput.legalGuidance) {
     return (
-        <Alert className="mt-8 shadow-md bg-secondary/20 border-secondary/50">
+        <Alert className="mt-8 shadow-md bg-secondary/20 border-secondary/50 transition-all duration-300 hover:shadow-lg">
             <Info className="h-5 w-5 text-secondary-foreground" />
             <AlertTitle>Awaiting Input</AlertTitle>
             <AlertDescription>Please describe your situation above to receive legal guidance.</AlertDescription>
@@ -70,13 +70,13 @@ export function LegalGuidanceDisplay({
 
   return (
     <div className="space-y-6 mt-8">
-      <Card className="shadow-lg border-primary/50">
+      <Card className="shadow-lg border-primary/50 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
         <CardHeader>
           <div className="flex items-center">
             <Gavel className="h-8 w-8 mr-3 text-primary" />
             <CardTitle className="text-2xl">Legal Information Overview</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-base">
             Based on the situation you described, here's some relevant legal information. This is not a substitute for professional legal advice.
           </CardDescription>
         </CardHeader>
@@ -101,13 +101,13 @@ export function LegalGuidanceDisplay({
       </Card>
 
       {legalOutput.includeResources && (resourceSections.some(sec => sec.content && sec.content.trim() !== 'List of relevant NGOs will be here' && sec.content.trim() !== 'List of support centers will be here' && sec.content.trim() !== '')) && (
-        <Card className="shadow-lg bg-accent/10 border-accent/40">
+        <Card className="shadow-lg bg-accent/10 border-accent/40 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
           <CardHeader>
              <div className="flex items-center">
                 <Info className="h-8 w-8 mr-3 text-accent" />
                 <CardTitle className="text-2xl">Support Resources</CardTitle>
             </div>
-            <CardDescription>
+            <CardDescription className="text-base">
               Here are some resources that might be helpful for your situation.
             </CardDescription>
           </CardHeader>
@@ -131,7 +131,7 @@ export function LegalGuidanceDisplay({
           </CardContent>
         </Card>
       )}
-       <Alert variant="default" className="mt-8 shadow-md bg-muted/50">
+       <Alert variant="default" className="mt-8 shadow-md bg-muted/50 transition-all duration-300 hover:shadow-lg">
          <Info className="h-5 w-5" />
         <AlertTitle>Important Disclaimer</AlertTitle>
         <AlertDescription>

@@ -9,7 +9,7 @@ export default function SignLanguagePage() {
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
           <h2 className="text-3xl font-semibold text-foreground tracking-tight">Sign Language Communication</h2>
-          <p className="text-muted-foreground mt-1">Use your camera to communicate with hand gestures.</p>
+          <p className="text-lg text-muted-foreground mt-1">Use your camera to communicate with hand gestures.</p>
       </div>
       
       <Alert variant="default" className="mb-6 bg-accent/10 border-accent/30 text-accent-foreground">

@@ -5,7 +5,7 @@ import { Info } from 'lucide-react';
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <Card className="w-full max-w-2xl shadow-xl border-border">
+      <Card className="w-full max-w-2xl shadow-xl border-border transition-all duration-300 hover:shadow-2xl hover:scale-[1.01]">
         <CardHeader className="items-center text-center pt-8">
           <Info data-ai-hint="information symbol" className="h-16 w-16 mb-4 text-primary" />
           <CardTitle className="text-3xl font-semibold">Welcome to Sahaaya AI</CardTitle>
@@ -14,7 +14,7 @@ export default function HomePage() {
           <p className="text-lg text-muted-foreground mb-6">
             Please select an option from the sidebar to get started.
           </p>
-          <p className="text-md text-foreground">
+          <p className="text-lg text-foreground">
             We are here to listen, help you heal, and guide you to act. Your privacy and well-being are our utmost priorities.
           </p>
         </CardContent>
