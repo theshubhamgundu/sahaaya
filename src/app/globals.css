@@ -29,7 +29,7 @@
     --destructive-foreground: 0 0% 100%; /* White */
     
     --border: 239 97% 85%; /* Very Light Blue (derived from Dark Blue) for borders */
-    --input: 0 0% 100%; /* White */
+    --input: 0 0% 80%; /* Slightly darker gray for input borders for better visibility */
     --ring: 239 97% 19%; /* Dark Blue */
 
     --chart-1: 239 97% 19%; /* Dark Blue */
@@ -77,7 +77,7 @@
     --destructive-foreground: 0 0% 100%; /* White */
     
     --border: 239 97% 35%; /* A blue for borders, visible on dark blue bg */
-    --input: 239 97% 25%; /* Slightly lighter blue for input fields */
+    --input: 239 97% 45%; /* Slightly lighter blue for input field borders for better visibility */
     --ring: 0 0% 100%; /* White */
 
     --chart-1: 0 0% 100%;   /* White */
@@ -108,5 +108,22 @@
   }
   h1, h2, h3, h4, h5, h6 {
     @apply text-foreground;
+  }
+}
+
+@layer utilities {
+  .animate-border-pulse {
+    animation: border-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes border-pulse {
+    0%, 100% {
+      border-color: hsl(var(--primary) / 0.5);
+      box-shadow: 0 0 8px 0px hsl(var(--primary) / 0.2);
+    }
+    50% {
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 16px 4px hsl(var(--primary) / 0.4);
+    }
   }
 }
