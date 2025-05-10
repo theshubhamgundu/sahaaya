@@ -1,18 +1,37 @@
 
 "use client";
 
-import * as React from 'react'; // Added import
+import * as React from 'react'; 
 import { useState, useEffect, useRef } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Send, Loader2, Mic, MicOff, AlertTriangle } from 'lucide-react';
+import { Send, Loader2, Mic, MicOff, AlertTriangle, Languages } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { detectEmotionalDistress, type DetectEmotionalDistressOutput } from '@/ai/flows/detect-emotional-distress';
 import { generatePersonalizedSupport, type GeneratePersonalizedSupportOutput } from '@/ai/flows/generate-personalized-support';
 import { AIResponseDisplay } from './AIResponseDisplay';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface LanguageOption {
+  value: string;
+  label: string;
+  name: string;
+}
+
+const languageOptions: LanguageOption[] = [
+  { value: 'en-US', label: 'English', name: 'English' },
+  { value: 'hi-IN', label: 'हिन्दी (Hindi)', name: 'Hindi' },
+  { value: 'te-IN', label: 'తెలుగు (Telugu)', name: 'Telugu' },
+];
 
 export function UserInputForm() {
   const [userInput, setUserInput] = useState('');
@@ -21,10 +40,10 @@ export function UserInputForm() {
   const [distressOutput, setDistressOutput] = useState<DetectEmotionalDistressOutput | null>(null);
   const [supportOutput, setSupportOutput] = useState<GeneratePersonalizedSupportOutput | null>(null);
   const [initialMessage, setInitialMessage] = useState<string | null>(null);
+  const [selectedLang, setSelectedLang] = useState<string>('en-US');
 
   const { toast } = useToast();
 
-  // Speech Recognition state and ref
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [speechError, setSpeechError] = useState<string | null>(null);
@@ -34,8 +53,9 @@ export function UserInputForm() {
       const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognitionAPI) {
         const instance = new SpeechRecognitionAPI();
-        instance.continuous = false; // Stop after first recognized utterance
+        instance.continuous = false;
         instance.interimResults = true;
+        instance.lang = selectedLang;
 
         instance.onresult = (event: SpeechRecognitionEvent) => {
           let transcript = '';
@@ -59,6 +79,8 @@ export function UserInputForm() {
             message = 'Microphone access denied. Please enable microphone permissions in your browser settings.';
           } else if (event.error === 'network') {
             message = 'A network error occurred during speech recognition. Please check your connection.';
+          } else if (event.error === 'language-not-supported') {
+            message = `The selected language (${selectedLang}) is not supported by your browser's speech recognition.`;
           }
           setSpeechError(message);
           setIsListening(false);
@@ -81,7 +103,7 @@ export function UserInputForm() {
         recognitionRef.current.abort();
       }
     };
-  }, [toast]);
+  }, [toast, selectedLang]);
 
   const handleToggleListening = () => {
     if (!recognitionRef.current) {
@@ -94,11 +116,13 @@ export function UserInputForm() {
       setIsListening(false);
     } else {
       try {
-        setSpeechError(null); // Clear previous errors
-        setUserInput(''); // Clear text area when starting new recording
+        setSpeechError(null); 
+        setUserInput(''); 
+        recognitionRef.current.lang = selectedLang;
         recognitionRef.current.start();
         setIsListening(true);
-        toast({ title: "Listening...", description: "Speak into your microphone. Speech will be transcribed into the text area." });
+        const currentLanguageName = languageOptions.find(lang => lang.value === selectedLang)?.name || 'the selected language';
+        toast({ title: "Listening...", description: `Speak in ${currentLanguageName}. Speech will be transcribed into the text area.` });
       } catch (e) {
         const errorMessage = e instanceof Error ? e.message : "Could not start listening. Check microphone permissions.";
         setSpeechError(errorMessage);
@@ -111,7 +135,7 @@ export function UserInputForm() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (isListening && recognitionRef.current) {
-        recognitionRef.current.stop(); // Stop listening if active before submitting
+        recognitionRef.current.stop(); 
         setIsListening(false);
     }
     if (!userInput.trim()) {
@@ -149,12 +173,9 @@ export function UserInputForm() {
           setSupportOutput(supportData);
           setInitialMessage(null); 
         } else {
-           // If no legal info needed, but distress detected, supportOutput will remain null.
-           // The AIResponseDisplay will show affirmation/calmingResponse from distressOutput.
            setInitialMessage(null); 
         }
       } else {
-        // No distress detected, distressOutput will reflect this.
         setInitialMessage(null);
       }
     } catch (err) {
@@ -173,19 +194,38 @@ export function UserInputForm() {
   };
 
   return (
-    <div className="w-full"> {/* Changed max-w-2xl mx-auto to w-full */}
+    <div className="w-full"> 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <Label htmlFor="userStory" className="block text-lg font-medium text-foreground mb-2">
-            Share your experience. We are here to listen.
-          </Label>
+          <div className="flex justify-between items-center mb-2">
+            <Label htmlFor="userStory" className="block text-lg font-medium text-foreground">
+              Share your experience. We are here to listen.
+            </Label>
+            {recognitionRef.current && (
+            <div className="flex items-center gap-2">
+                <Languages className="h-5 w-5 text-muted-foreground" />
+                <Select value={selectedLang} onValueChange={setSelectedLang} disabled={isListening || isLoading}>
+                  <SelectTrigger className="w-auto min-w-[120px] h-9 text-sm">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languageOptions.map(lang => (
+                      <SelectItem key={lang.value} value={lang.value} className="text-sm">
+                        {lang.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
           <Textarea
             id="userStory"
             value={userInput}
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setUserInput(e.target.value)}
             placeholder={isListening ? "Listening..." : "Tell us what happened... or use the microphone icon."}
             rows={8}
-            className="shadow-sm focus:ring-primary focus:border-primary text-base"
+            className="shadow-sm focus:ring-primary focus:border-primary text-base w-full"
             aria-label="Share your story"
             disabled={isLoading}
           />
@@ -221,9 +261,9 @@ export function UserInputForm() {
                 type="button"
                 variant="outline"
                 onClick={handleToggleListening}
-                disabled={isLoading} // Matches submit button's disabled state logic
+                disabled={isLoading} 
                 title={isListening ? "Stop voice input" : "Start voice input"}
-                className="p-3 rounded-lg shadow-md" // Custom padding to match submit button height
+                className="p-3 rounded-lg shadow-md h-full aspect-square"
               >
                 {isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}
               </Button>
@@ -234,11 +274,10 @@ export function UserInputForm() {
       <AIResponseDisplay
         distressOutput={distressOutput}
         supportOutput={supportOutput}
-        isLoading={isLoading && !initialMessage} // Show loading skeleton only if not showing initial message
+        isLoading={isLoading && !initialMessage} 
         error={error}
         initialMessage={initialMessage}
       />
     </div>
   );
 }
-
