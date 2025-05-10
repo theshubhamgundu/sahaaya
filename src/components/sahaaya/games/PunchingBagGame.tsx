@@ -8,12 +8,18 @@ import { Flame, Sparkles } from 'lucide-react'; // Using Flame for a "punch" eff
 
 export function PunchingBagGame() {
   const [hits, setHits] = React.useState(0);
-  const [isHitting, setIsHitting] = React.useState(false);
+  const [isHitting, setIsHitting] = React.useState(false); // Controls the "hit" animation state
   const [showSparkles, setShowSparkles] = React.useState(false);
+  const punchLockRef = React.useRef(false); // Lock to prevent rapid re-triggering
 
   const handlePunch = () => {
+    if (punchLockRef.current) {
+      return; // Already processing a punch or in cooldown
+    }
+    punchLockRef.current = true;
+
     setHits(prevHits => prevHits + 1);
-    setIsHitting(true);
+    setIsHitting(true); // Trigger hit animation
     setShowSparkles(true);
 
     // Vibrate on mobile devices
@@ -26,12 +32,20 @@ export function PunchingBagGame() {
       }
     }
 
-    setTimeout(() => setIsHitting(false), 150); // Duration of the hit animation
+    setTimeout(() => {
+      setIsHitting(false); // End hit animation
+      punchLockRef.current = false; // Release lock after animation + cooldown period
+    }, 150); // Duration of the hit animation and lock
+
     setTimeout(() => setShowSparkles(false), 500); // Sparkles linger a bit longer
   };
 
   const resetGame = () => {
     setHits(0);
+    // Ensure lock is reset if game is reset mid-punch
+    punchLockRef.current = false;
+    setIsHitting(false);
+    setShowSparkles(false);
   }
 
   let encouragementMessage = "Keep going!";
@@ -42,22 +56,18 @@ export function PunchingBagGame() {
 
   return (
     <div className="flex flex-col items-center space-y-6 p-4 rounded-lg bg-card">
-      <div 
+      <div
         data-ai-hint="punching bag boxing"
         className={cn(
           "relative w-40 h-60 bg-destructive/80 rounded-b-full rounded-t-md cursor-pointer transition-all duration-100 ease-out flex items-center justify-center shadow-lg select-none",
-          isHitting ? 'scale-95 -rotate-3 translate-y-1' : 'scale-100 rotate-0 translate-y-0',
-          "hover:scale-105 active:scale-90" // Added active state for better tap feedback
+          isHitting ? 'scale-95 -rotate-3 translate-y-1' : 'scale-100 rotate-0 translate-y-0', // Animation based on isHitting state
+          "hover:scale-105 active:scale-90" // Immediate feedback on press
         )}
-        onClick={handlePunch}
-        onMouseDown={() => setIsHitting(true)}
-        onMouseUp={() => setIsHitting(false)}
-        onTouchStart={(e) => { // Prevent default to avoid double tap zoom and ensure vibration
-          e.preventDefault(); 
-          setIsHitting(true);
-          handlePunch(); // Call handlePunch here for touch to ensure vibration
+        onClick={handlePunch} // For mouse clicks
+        onTouchStart={(e) => { // For touch events
+          e.preventDefault(); // Prevent emulated click and other default touch behaviors
+          handlePunch();
         }}
-        onTouchEnd={() => setIsHitting(false)}
         role="button"
         tabIndex={0}
         aria-label="Punching Bag"
