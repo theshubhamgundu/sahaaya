@@ -1,10 +1,9 @@
-
 'use client';
 
 import * as React from "react";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HeartHandshake, Gavel, Accessibility, Users, LogIn, LifeBuoy } from 'lucide-react';
+import { HeartHandshake, Gavel, Accessibility, Users, LogIn, LifeBuoy, Gamepad2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -34,6 +33,11 @@ const navigationOptions = [
     href: '/supporter-chat',
     icon: LogIn,
   },
+  {
+    name: 'Stress Relief Games',
+    href: '/stress-relief-games',
+    icon: Gamepad2,
+  },
 ];
 
 interface SidebarProps {
@@ -52,15 +56,15 @@ export function Sidebar({ onLinkClick, isMobileView = false }: SidebarProps) {
 
   return (
     <aside className={cn(
-        "bg-card flex flex-col h-full w-full", // w-full to fill its container (desktop sidebar container or sheet)
-        isMobileView ? "p-0" : "p-6 border-r border-sidebar-border" // No padding if mobile, header/footer added by layout
+        "bg-sidebar flex flex-col h-full w-full text-sidebar-foreground", 
+        isMobileView ? "p-0" : "p-6 border-r border-sidebar-border" 
     )}>
       {/* Desktop: Logo and Title Section */}
       {!isMobileView && (
-        <Link href="/" className="mb-8 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md p-1 -ml-1" onClick={onLinkClick}>
-            <LifeBuoy className="h-12 w-12 text-primary" />
+        <Link href="/" className="mb-8 flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring rounded-md p-1 -ml-1" onClick={onLinkClick}>
+            <LifeBuoy className="h-12 w-12 text-sidebar-primary" />
             <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight text-sidebar-foreground">
                 Sahaaya AI
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -75,13 +79,15 @@ export function Sidebar({ onLinkClick, isMobileView = false }: SidebarProps) {
         {navigationOptions.map((item) => (
           <Link key={item.name} href={item.href} passHref legacyBehavior>
             <Button
-              onClick={onLinkClick} // Will close sheet in mobile, do nothing on desktop
+              onClick={onLinkClick} 
               variant={pathname === item.href ? 'secondary' : 'ghost'}
               className={cn(
                 'w-full justify-start text-lg h-14 px-4 py-3 transition-all duration-200 ease-in-out transform hover:scale-[1.02] hover:shadow-md', 
                 pathname === item.href
-                  ? 'bg-primary/10 text-primary font-semibold border border-primary/30 shadow-lg scale-[1.01]'
-                  : 'text-foreground/80 hover:bg-muted hover:text-foreground'
+                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold border border-sidebar-border shadow-lg scale-[1.01]'
+                  : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground',
+                // Specific styling for sidebar buttons to use sidebar theme colors
+                'focus-visible:ring-sidebar-ring'
               )}
               aria-current={pathname === item.href ? 'page' : undefined}
             >
@@ -94,7 +100,7 @@ export function Sidebar({ onLinkClick, isMobileView = false }: SidebarProps) {
 
       {/* Desktop: Footer Section */}
       {!isMobileView && (
-        <div className="mt-auto pt-6 border-t border-border">
+        <div className="mt-auto pt-6 border-t border-sidebar-border">
           <p className="text-sm text-muted-foreground text-center">
             Sahaaya AI Assistant &copy; {currentTime}
           </p>
