@@ -156,27 +156,55 @@ export function UserInputForm() {
     try {
       const distressData = await detectEmotionalDistress({ userInput });
       setDistressOutput(distressData);
+      const detectedLang = distressData.detectedLanguage || selectedLang.split('-')[0] || 'en';
+
 
       if (distressData.emotionalDistressDetected) {
+        let preliminaryMessage = '';
+        if (distressData.distressType) {
+           preliminaryMessage = `We've identified that you might be feeling ${distressData.distressType}. `;
+        } else {
+           preliminaryMessage = `We've identified that you might be distressed. `;
+        }
+        
+        if (distressData.affirmation || distressData.calmingResponse) {
+            preliminaryMessage += `${distressData.affirmation || distressData.calmingResponse} `;
+        }
+
         if (distressData.legalInformationNeeded) {
-           if (distressData.affirmation || distressData.calmingResponse) {
-             setInitialMessage(`We've identified that you might be feeling ${distressData.distressType || 'distressed'}. Here's a quick thought: ${distressData.affirmation || distressData.calmingResponse} We are now generating more specific guidance including legal information.`);
-           } else {
-             setInitialMessage(`We've identified that you might be feeling ${distressData.distressType || 'distressed'}. We are now generating more specific guidance including legal information.`);
-           }
+          preliminaryMessage += `We are now generating more specific guidance including legal information.`;
+          setInitialMessage(preliminaryMessage);
 
           const supportData = await generatePersonalizedSupport({
             situation: userInput,
             emotionalState: distressData.distressType || 'distress',
             legalInformationNeeded: true,
+            inputLanguage: detectedLang,
           });
           setSupportOutput(supportData);
           setInitialMessage(null); 
         } else {
+          // If legal info not needed, the distressOutput already contains affirmation/calming response in the correct lang.
+          // No need for supportOutput or initialMessage in this case, AIResponseDisplay will handle distressOutput.
            setInitialMessage(null); 
         }
       } else {
-        setInitialMessage(null);
+        // Not distressed, or AI decided not to show affirmation/calming response directly from distress detection
+        // but still might need legal info or general support.
+        if (distressData.legalInformationNeeded) {
+            setInitialMessage("We are processing your request and will provide guidance, including any relevant legal information.");
+            const supportData = await generatePersonalizedSupport({
+                situation: userInput,
+                emotionalState: 'neutral', // Or some other default
+                legalInformationNeeded: true,
+                inputLanguage: detectedLang,
+            });
+            setSupportOutput(supportData);
+            setInitialMessage(null);
+        } else {
+            // No distress detected, no legal info needed. AIResponseDisplay will show its generic message.
+            setInitialMessage(null);
+        }
       }
     } catch (err) {
       console.error("AI processing error:", err);

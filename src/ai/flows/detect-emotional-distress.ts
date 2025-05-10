@@ -31,14 +31,18 @@ const DetectEmotionalDistressOutputSchema = z.object({
   affirmation: z
     .string()
     .optional()
-    .describe('A personalized affirmation to provide comfort.'),
+    .describe('A personalized affirmation to provide comfort, in the detected language.'),
   calmingResponse: z
     .string()
     .optional()
-    .describe('A calming response to provide mental clarity.'),
+    .describe('A calming response to provide mental clarity, in the detected language.'),
   legalInformationNeeded: z
     .boolean()
     .describe('Whether legal information is needed based on the user input.'),
+  detectedLanguage: z
+    .string()
+    .optional()
+    .describe('The ISO 639-1 code of the language detected in the user input (e.g., en, hi, te).'),
 });
 export type DetectEmotionalDistressOutput = z.infer<
   typeof DetectEmotionalDistressOutputSchema
@@ -56,18 +60,20 @@ const prompt = ai.definePrompt({
   output: {schema: DetectEmotionalDistressOutputSchema},
   prompt: `You are an AI assistant designed to detect emotional distress from user input and provide support.
 
-  Analyze the following user input for signs of emotional distress, such as shame, fear, or anxiety.
-
+  Analyze the following user input:
   User Input: {{{userInput}}}
 
-  Based on your analysis, determine if emotional distress is present and, if so, identify the type of distress.
-  Provide a personalized affirmation and a calming response to offer comfort and mental clarity.
+  Follow these steps:
+  1.  Detect the primary language of the user input (e.g., English, Hindi, Telugu).
+  2.  Based on your analysis of the content, determine if emotional distress is present. If so, identify the type of distress.
+  3.  If distress is detected, provide a personalized affirmation and a calming response. **These responses MUST be in the SAME language as the detected user input language.**
+  4.  Determine if legal information is needed based on the user's situation.
 
-  Also, determine if legal information is needed based on the user's situation.
-
-  Output the response in JSON format, ensuring that emotionalDistressDetected is a boolean value.
-  If distress is detected, populate the distressType, affirmation, and calmingResponse fields.
-  Set legalInformationNeeded to true if the situation warrants legal advice.
+  Output the response in JSON format, ensuring that:
+  -   \`emotionalDistressDetected\` is a boolean value.
+  -   If distress is detected, \`distressType\`, \`affirmation\`, and \`calmingResponse\` fields are populated. The affirmation and calming response must be in the detected language.
+  -   \`legalInformationNeeded\` is true if the situation warrants legal advice.
+  -   \`detectedLanguage\` field is set to the ISO 639-1 code of the detected language (e.g., 'en' for English, 'hi' for Hindi, 'te' for Telugu). If the language is mixed or unclear, default to 'en'.
   `,
 });
 
