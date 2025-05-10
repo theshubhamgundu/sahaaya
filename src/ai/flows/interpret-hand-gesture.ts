@@ -40,12 +40,27 @@ Analyze the provided image of a hand gesture.
 
 Image of hand gesture: {{media url=gestureImageUri}}
 
-Describe the gesture you see or interpret the common meaning of the sign if it's a recognizable one (e.g., "thumbs up", "hello", "help", "yes", "no").
-Keep the interpretation brief. If the gesture is unclear or not a common sign, state that.
-For now, as a conceptual model, you can respond with a placeholder interpretation if the gesture is complex.
-Provide a confidence score if possible (e.g., 0.7 for 70% confident). If not confident, set it low.
-If you cannot interpret it, set interpretedText to "Gesture unclear" and provide an error message.
-Respond in the specified JSON format.
+Instructions:
+1. Identify the most prominent hand gesture in the image. If multiple people are visible, focus on the clearest and most central hand gestures, likely belonging to the primary user facing the camera.
+2. Describe the gesture you see or interpret its common meaning if it's a recognizable basic sign (e.g., "thumbs up", "hello", "help", "yes", "no", "thank you", "please").
+3. Keep the interpretation brief and focused on a single, clear gesture if possible.
+4. If the gesture is unclear, ambiguous, not a common sign, or too complex for basic interpretation, clearly state that (e.g., "Gesture unclear or complex").
+5. Provide a confidence score (0.0 to 1.0) for your interpretation. If highly uncertain, set it low (e.g., below 0.5).
+6. If you cannot interpret the gesture or an error occurs, set interpretedText to "Gesture unclear" or a similar descriptive message, and provide an error message in the 'error' field.
+7. Respond in the specified JSON format.
+
+Example of a good response for a clear gesture:
+{
+  "interpretedText": "Thumbs up",
+  "confidence": 0.85
+}
+
+Example of a response for an unclear gesture:
+{
+  "interpretedText": "Gesture unclear",
+  "confidence": 0.3,
+  "error": "The hand position is ambiguous or partially obscured."
+}
 `,
 config: {
     safetySettings: [
@@ -67,12 +82,14 @@ const interpretHandGestureFlow = ai.defineFlow(
     try {
       const {output} = await prompt(input);
       if (!output) {
-        return { interpretedText: "Interpretation failed", error: "No output from AI model." };
+        return { interpretedText: "Interpretation failed", error: "No output from AI model.", confidence: 0 };
       }
-      return output;
+      // Ensure confidence is always present, defaulting to 0 if not provided by the model
+      return { ...output, confidence: output.confidence ?? 0 };
     } catch (e: any) {
       console.error("Error in interpretHandGestureFlow:", e);
-      return { interpretedText: "Interpretation error", error: e.message || "Unknown error during gesture interpretation." };
+      return { interpretedText: "Interpretation error", error: e.message || "Unknown error during gesture interpretation.", confidence: 0 };
     }
   }
 );
+

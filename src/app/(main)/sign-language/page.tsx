@@ -14,10 +14,20 @@ export default function SignLanguagePage() {
       
       <Alert variant="default" className="mb-6 bg-accent/10 border-accent/30 text-accent-foreground">
         <AlertTriangle className="h-5 w-5 text-accent" />
-        <AlertTitle className="text-accent">Experimental Feature</AlertTitle>
-        <AlertDescription className="text-accent/90">
-          Sign language interpretation is complex and this feature is currently conceptual. 
-          The AI will attempt to understand basic gestures. Accuracy may vary.
+        <AlertTitle className="text-accent">Experimental Feature - Important Limitations</AlertTitle>
+        <AlertDescription className="text-accent/90 space-y-1">
+          <p>
+            Sign language interpretation is highly complex and this feature is currently conceptual, relying on general AI models.
+          </p>
+          <p>
+            <strong>Accuracy:</strong> The AI will attempt to understand basic, clear gestures from a single user. Accuracy may vary significantly based on gesture clarity, lighting, and background. It is not a substitute for a human interpreter.
+          </p>
+          <p>
+            <strong>Multiple People:</strong> The system is designed for a single user. It cannot reliably distinguish or interpret gestures if multiple people are in the camera view. Please ensure only the person signing is clearly visible.
+          </p>
+          <p>
+            <strong>Real-time:</strong> While the camera feed is live, interpretation happens when you click the button. True continuous, real-time interpretation is not yet supported.
+          </p>
         </AlertDescription>
       </Alert>
 
