@@ -67,6 +67,24 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		keyframes: {
+        'bounce-x': {
+          '0%, 100%': { transform: 'translateX(-25%)' },
+          '50%': { transform: 'translateX(25%)' },
+        },
+        'wiggle': {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        'ping-slow': {
+          '75%, 100%': {
+            transform: 'scale(1.1)',
+            opacity: '0',
+          },
+        },
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -85,6 +103,10 @@ export default {
   			}
   		},
   		animation: {
+        'bounce-x': 'bounce-x 1.5s ease-in-out infinite',
+        'wiggle': 'wiggle 1s ease-in-out infinite',
+        'ping-slow': 'ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+        'spin-slow': 'spin-slow 8s linear infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

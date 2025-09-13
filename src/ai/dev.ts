@@ -1,5 +1,8 @@
 import { config } from 'dotenv';
-config();
+import path from 'path';
+
+// Load environment variables from .env.local
+config({ path: path.resolve(process.cwd(), '.env.local') });
 
 import '@/ai/flows/detect-emotional-distress.ts';
 import '@/ai/flows/generate-personalized-support.ts';
