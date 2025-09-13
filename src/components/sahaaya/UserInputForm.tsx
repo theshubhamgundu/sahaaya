@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from 'react'; 
@@ -9,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Send, Loader2, Mic, MicOff, AlertTriangle, Languages } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { detectEmotionalDistress, type DetectEmotionalDistressOutput } from '@/ai/flows/detect-emotional-distress';
-import { generatePersonalizedSupport, type GeneratePersonalizedSupportOutput } from '@/ai/flows/generate-personalized-support';
+import type { DetectEmotionalDistressOutput } from '@/ai/flows/detect-emotional-distress';
+import type { GeneratePersonalizedSupportOutput } from '@/ai/flows/generate-personalized-support';
 import { AIResponseDisplay } from './AIResponseDisplay';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
@@ -154,7 +153,12 @@ export function UserInputForm() {
     setInitialMessage(null);
 
     try {
-      const distressData = await detectEmotionalDistress({ userInput });
+      const distressRes = await fetch('/api/detect-emotional-distress', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userInput }), cache: 'no-store' });
+      if (!distressRes.ok) {
+        const err = await distressRes.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to detect emotional distress');
+      }
+      const distressData = (await distressRes.json()) as DetectEmotionalDistressOutput;
       setDistressOutput(distressData);
       const detectedLang = distressData.detectedLanguage || selectedLang.split('-')[0] || 'en';
 
@@ -175,12 +179,12 @@ export function UserInputForm() {
           preliminaryMessage += `We are now generating more specific guidance including legal information.`;
           setInitialMessage(preliminaryMessage);
 
-          const supportData = await generatePersonalizedSupport({
-            situation: userInput,
-            emotionalState: distressData.distressType || 'distress',
-            legalInformationNeeded: true,
-            inputLanguage: detectedLang,
-          });
+          const supportRes = await fetch('/api/generate-personalized-support', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ situation: userInput, emotionalState: distressData.distressType || 'distress', legalInformationNeeded: true, inputLanguage: detectedLang }), cache: 'no-store' });
+          if (!supportRes.ok) {
+            const err = await supportRes.json().catch(() => ({}));
+            throw new Error(err.error || 'Failed to generate support');
+          }
+          const supportData = (await supportRes.json()) as GeneratePersonalizedSupportOutput;
           setSupportOutput(supportData);
           setInitialMessage(null); 
         } else {
@@ -193,12 +197,12 @@ export function UserInputForm() {
         // but still might need legal info or general support.
         if (distressData.legalInformationNeeded) {
             setInitialMessage("We are processing your request and will provide guidance, including any relevant legal information.");
-            const supportData = await generatePersonalizedSupport({
-                situation: userInput,
-                emotionalState: 'neutral', // Or some other default
-                legalInformationNeeded: true,
-                inputLanguage: detectedLang,
-            });
+            const supportRes = await fetch('/api/generate-personalized-support', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ situation: userInput, emotionalState: 'neutral', legalInformationNeeded: true, inputLanguage: detectedLang }), cache: 'no-store' });
+            if (!supportRes.ok) {
+              const err = await supportRes.json().catch(() => ({}));
+              throw new Error(err.error || 'Failed to generate support');
+            }
+            const supportData = (await supportRes.json()) as GeneratePersonalizedSupportOutput;
             setSupportOutput(supportData);
             setInitialMessage(null);
         } else {
