@@ -1,5 +1,5 @@
-import * as React from 'react'; // Added import
 "use client";
+
 import type { DetectEmotionalDistressOutput } from '@/ai/flows/detect-emotional-distress';
 import type { GeneratePersonalizedSupportOutput } from '@/ai/flows/generate-personalized-support';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -60,7 +60,7 @@ export function AIResponseDisplay({
   }
   
   if (!distressOutput && !supportOutput) {
-    return null; // Or some placeholder indicating to type above
+    return null;
   }
 
   const hasEmotionalSupport = distressOutput?.affirmation || distressOutput?.calmingResponse;
