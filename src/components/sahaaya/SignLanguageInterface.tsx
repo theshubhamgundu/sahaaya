@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from 'react'; // Added import
@@ -9,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Camera, Send, MessageSquare, Hand } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { interpretHandGesture, type InterpretHandGestureOutput } from '@/ai/flows/interpret-hand-gesture';
-import { generateSignLanguageResponse, type GenerateSignLanguageResponseOutput } from '@/ai/flows/generate-sign-language-response';
+import type { InterpretHandGestureOutput } from '@/ai/flows/interpret-hand-gesture';
+import type { GenerateSignLanguageResponseOutput } from '@/ai/flows/generate-sign-language-response';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 
@@ -91,7 +90,12 @@ export function SignLanguageInterface() {
     const gestureImageUri = canvas.toDataURL('image/jpeg'); // Using JPEG for smaller size
 
     try {
-      const interpretationResult: InterpretHandGestureOutput = await interpretHandGesture({ gestureImageUri });
+      const interpRes = await fetch('/api/interpret-hand-gesture', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ gestureImageUri }), cache: 'no-store' });
+      if (!interpRes.ok) {
+        const err = await interpRes.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to interpret gesture');
+      }
+      const interpretationResult = (await interpRes.json()) as InterpretHandGestureOutput;
       
       if (interpretationResult.error || !interpretationResult.interpretedText || interpretationResult.interpretedText === "Interpretation failed" || interpretationResult.interpretedText === "Interpretation error") {
         setError(interpretationResult.error || 'Failed to interpret gesture.');
@@ -107,10 +111,12 @@ export function SignLanguageInterface() {
       // Now generate AI response based on interpretation
       setIsGeneratingResponse(true);
       const conversationContext = conversationLog.slice(-5).map(entry => `${entry.sender}: ${entry.text}`).join('\n');
-      const responseResult: GenerateSignLanguageResponseOutput = await generateSignLanguageResponse({ 
-        interpretedGestureText: interpretationResult.interpretedText,
-        conversationContext
-      });
+      const respRes = await fetch('/api/generate-sign-language-response', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ interpretedGestureText: interpretationResult.interpretedText, conversationContext }), cache: 'no-store' });
+      if (!respRes.ok) {
+        const err = await respRes.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to generate response');
+      }
+      const responseResult = (await respRes.json()) as GenerateSignLanguageResponseOutput;
 
       if (!responseResult.responseText) {
         setError( 'Failed to generate AI response.');
@@ -220,4 +226,3 @@ export function SignLanguageInterface() {
     </div>
   );
 }
-

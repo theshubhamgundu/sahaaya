@@ -1,4 +1,5 @@
 import * as React from 'react'; // Added import
+"use client";
 import type { ProvideRelevantLegalGuidanceOutput } from '@/ai/flows/provide-relevant-legal-guidance';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

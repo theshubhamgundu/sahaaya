@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from 'react';
@@ -9,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Send, Loader2, Mic, MicOff, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { provideRelevantLegalGuidance, type ProvideRelevantLegalGuidanceOutput } from '@/ai/flows/provide-relevant-legal-guidance';
+import type { ProvideRelevantLegalGuidanceOutput } from '@/ai/flows/provide-relevant-legal-guidance';
 import { LegalGuidanceDisplay } from './LegalGuidanceDisplay';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { db } from '@/lib/firebase/firebase';
@@ -127,7 +126,12 @@ export function LegalInputForm() {
     setLegalOutput(null);
 
     try {
-      const guidanceData = await provideRelevantLegalGuidance({ situationDescription: userInput });
+      const res = await fetch('/api/provide-relevant-legal-guidance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ situationDescription: userInput }), cache: 'no-store' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to get legal guidance');
+      }
+      const guidanceData = (await res.json()) as ProvideRelevantLegalGuidanceOutput;
       setLegalOutput(guidanceData);
 
       // Store prompt in Firebase
@@ -238,4 +242,3 @@ export function LegalInputForm() {
     </div>
   );
 }
-
